@@ -46,7 +46,21 @@
 
 /* _____________ Your Code Here _____________ */
 
-declare function SimpleVue(options: any): any
+type GetComputed<TComputed> = {
+  [key in keyof TComputed]: TComputed[key] extends () => infer Result
+    ? Result
+    : never
+}
+
+type Options<TData, TComputed, TMethods> = {
+  data: (this: void) => TData
+  computed: TComputed & ThisType<TData>
+  methods: TMethods & ThisType<TData & GetComputed<TComputed> & TMethods>
+}
+
+declare function SimpleVue<TData, TComputed, TMethods>(
+  options: Options<TData, TComputed, TMethods>,
+): unknown
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
